@@ -1,0 +1,97 @@
+#include <iostream>
+
+template<typename T>
+class MyDeck {
+private:
+    T* Mass;           
+    int vmest;     
+    int kolvo;         
+
+public:
+    // конструктор
+    MyDeck() : vmest(10), kolvo(0) {
+        Mass = new T[vmest];
+    }
+
+    // дестрктор
+    ~MyDeck() {
+        delete[] Mass;
+    }
+
+    // Добавление элемента в конец
+    void push_back(const T& item) {
+        if (kolvo == vmest) {
+            vmest *= 2;
+            T* newMass = new T[vmest];
+            for (int i = 0; i < kolvo; ++i) {
+                newMass[i] = Mass[i];
+            }
+            delete[] Mass;
+            Mass = newMass;
+        }
+        Mass[kolvo++] = item;
+    }
+
+    // Удаление последнего элемента
+    void pop_back() {
+        if (kolvo > 0) {
+            --kolvo;
+        }
+    }
+
+    // Добавление элемента в начало
+    void push_front(const T& item) {
+        if (kolvo == vmest) {
+            vmest *= 2;
+            T* newArr = new T[vmest];
+            for (int i = 0; i < kolvo; ++i) {
+                newArr[i + 1] = Mass[i];
+            }
+            delete[] Mass;
+            Mass = newArr;
+        }
+        else {
+            for (int i = kolvo; i > 0; --i) {
+                Mass[i] = Mass[i - 1];
+            }
+        }
+        Mass[0] = item;
+        ++kolvo;
+    }
+
+    // Удаление первого элемента
+    void pop_front() {
+        if (kolvo > 0) {
+            for (int i = 0; i < kolvo - 1; ++i) {
+                Mass[i] = Mass[i + 1];
+            }
+            --kolvo;
+        }
+    }
+
+    // Возвращает количество элементов в деке
+    int Size() const {
+        return kolvo;
+    }
+    //перегрузка оператора '<<'
+    friend std::ostream& operator<<(std::ostream& vivod, const MyDeck<T>& deck) {
+        vivod << "Deck contents:" << std::endl;
+        for (int i = 0; i < deck.kolvo; ++i) {
+            vivod << deck.Mass[i] << " ";
+        }
+        return vivod;
+    }
+};
+
+int main() {
+    MyDeck<int> deck;
+    deck.push_back(10);
+    deck.push_back(20);
+    deck.push_front(5);
+    deck.pop_back();
+    deck.pop_front();
+    deck.Size();
+
+    std::cout << deck << std::endl;
+    return 0;
+}
